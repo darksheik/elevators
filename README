@@ -1,0 +1,5 @@
+Elevators
+
+I was asked recently during an interview to sketch out a system for managing a bank of elevators in an object-oriented way. I decided to make it a project to actually built it.  W00t!
+
+The bank will have four elevators and the building will have 40 floors.  Of course, this can be tweaked.  I may alter it in the future to have certain elevators only go to certain floors if I feel saucy.
