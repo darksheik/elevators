@@ -12,6 +12,12 @@ bank.report_status
 
 until (info = gets.chomp) == "quit"
   if info.length > 0 then bank.push_button(*(info.split)) end
+
+  # Now that the status of all elevators and requests are known, let's resolve them
+  bank.resolve_requests
+  bank.move_elevators
+  
   bank.report_status
   bank.report_requests
+  
 end

@@ -1,6 +1,6 @@
 require 'Elevator'
 
-describe 'initializing an elevators' do
+describe 'initializing elevators' do
   elevator = Elevator.new(1,2)
   
   it 'should have an initial floor' do
