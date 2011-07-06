@@ -15,7 +15,7 @@ class Elevator
     # The amount of time it takes for people to get on an elevator will vary, so make it random.
     # Maybe somebody is holding the door
     chance = rand(2)  
-    if (chance == 1) then self.boarding = false end
+    if (chance == 1) then true else false end
   end
   
   def changestate(f)
@@ -29,6 +29,10 @@ class Elevator
   end
   
   def boarding_text
-    @boarding ? "brd" : ""
+    @boarding ? "boarding" : ""
+  end
+  
+  def boarding?
+    @boarding
   end
 end

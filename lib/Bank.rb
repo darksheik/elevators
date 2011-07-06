@@ -58,7 +58,8 @@ class Bank
 	gotone = false
 	# No elevator is currently handling this request.  Assign one.
 	@elevators.each do |e|
-	  puts "Checking elevator " + e.state.to_s + " " + e.floor.to_s + " " + @requests.to_s
+	  #Debug
+	  #puts "Checking elevator " + e.state.to_s + " " + e.floor.to_s + " " + @requests.to_s
           if (!gotone) then
             if (e.state == :idle) then
               # Assign an idle elevator unless one is on the way
@@ -67,8 +68,13 @@ class Bank
               @requests[r] = e
             end
           end
-          if (!gotone) then
-            if ((floor.to_i < e.floor && e.state == :down) || (floor.to_i > e.floor && e.state = :up))
+	  
+	  # If the request is still unhandled by the time it gets here,
+	  # find an active elevator that's moving toward the requested floor and in a proper state 
+	  
+          if (!gotone && e.state.to_s[0] == direction) then
+           if ((floor.to_i < e.floor && e.state == :down) || (floor.to_i > e.floor && e.state = :up))
+	      puts "Found an elevator whose state is " + e.state.to_s + " and whose floor is " + e.floor.to_s
               gotone = true
               e.changestate(floor.to_i)
               @requests[r] = e
@@ -82,19 +88,28 @@ class Bank
   
   def move_elevators
     @elevators.each do |e|
-      if (e.state == :up) then e.floor += 1 end
-      if (e.state == :down) then e.floor -= 1 end
-	
+      if (e.state == :up && !e.boarding?) then e.floor += 1 end
+      if (e.state == :down && !e.boarding?) then e.floor -= 1 end
+      
+      # Are the slowpokes done boarding yet?  Sheez!
+      if (e.boarding? && e.moving_on?) then
+        puts "Elevator has finished boarding and is moving on"
+	e.boarding = false
+      end
+
       # Did it hit a floor that had a request?  If so, put it in a boarding state
       @requests.keys.each do |r|
 	(direction,floor) = r.split
 
 	if (@requests[r] == e && e.floor == floor.to_i) then
 	  # It's a request that this elevator is handling
-	  puts "Elevator arrived at floor " + e.floor.to_s + ", request destroyed"
+	  puts "Elevator arrived at floor " + e.floor.to_s + ", request fulfilled"
 	  e.boarding = true
-	  if (e.floor == e.destination_floor) then e.state = :idle end
 	  @requests.delete(r)
+	  	  
+	  # If the elevator has arrived at its "ultimate" destination, change the state back to idle
+	  if (e.floor == e.destination_floor) then e.state = :idle end
+
 	end
       end
     end
